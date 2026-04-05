@@ -594,9 +594,9 @@ body { margin-bottom: 80px !important; }
                 if (!isOnline) setOfflineState(false);
             }
 
-            // Update bitrate from station config
-            if (data.station && data.station.bitrate) {
-                bitrateEl.textContent = data.station.bitrate + "k";
+            // Update bitrate from mounts array
+            if (data.station && data.station.mounts && data.station.mounts.length > 0) {
+                bitrateEl.textContent = data.station.mounts[0].bitrate + "k";
             }
 
             if (streamUrl !== data.station.listen_url) {
