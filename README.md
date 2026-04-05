@@ -1,47 +1,61 @@
 # Pinoy Seoul Radio Player Widget
 
-A lightweight, self-contained HTML/JS widget that displays Pinoy Seoul Radio's live status and embed player. Designed to be embedded in any website.
+A sticky footer radio player widget for Pinoy Seoul Radio with live status, visualizer, and offline detection.
 
 ## Features
 
-- **Live Status**: Shows "ON AIR" when streaming, "OFF AIR" when station is offline
-- **Auto-detection**: Automatically loads the player when user interacts with the page
-- **Watchdog**: Polls the AzuraCast API every 30 seconds to detect online/offline status
-- **Mobile-friendly**: Works on all devices including in-app browsers (WebView)
+- **Live Status**: Shows "ON AIR" (green) when streaming, "OFF AIR" (grey) when offline
+- **Dynamic Bitrate**: Displays actual bitrate from API (e.g., "128k")
+- **Visualizer**: Animated bar visualizer when playing
+- **Media Session**: Lock screen metadata on mobile
+- **Auto-recovery**: Reconnects automatically on stream drop
+- **WebView Detection**: Hides in native app browsers to prevent duplicate audio
+- **Offline State**: All UI elements turn grey when station is offline
 
 ## Usage
 
-Simply include the HTML and JavaScript in your page:
+Embed the widget in your page:
 
 ```html
-<div id="radio-card">
-  <!-- Copy the contents of index.html here -->
-</div>
+<!-- Copy entire index.html content -->
 ```
 
-Or embed via iframe:
+Or iframe:
 
 ```html
-<iframe src="https://pinoyseoul.github.io/radioplayer/" width="100%" height="150" frameborder="0"></iframe>
+<iframe src="https://pinoyseoul.github.io/radioplayer/" width="100%" height="80" frameborder="0"></iframe>
 ```
 
 ## How It Works
 
-1. The widget is hidden by default (`display: none`)
-2. On first click/keypress anywhere on the page, it reveals itself
-3. Fetches nowplaying data from `https://radio.pinoyseoul.com/api/nowplaying/live`
-4. If station is online: shows red "ON AIR" badge + live player
-5. If station is offline: shows grey "OFF AIR" badge + static station logo
-6. Polls API every 30 seconds to update status
+1. Fetches nowplaying data from `https://radio.pinoyseoul.com/api/nowplaying/live`
+2. Checks `station.is_online` for online/offline status
+3. Gets bitrate from `station.bitrate`
+4. Updates metadata every 10 seconds
+5. On offline:
+   - Badge changes to grey "OFF AIR"
+   - Visualizer bars turn grey
+   - Play button becomes grey
+   - Shows static station logo
 
 ## API Response Expected
 
 ```json
 {
-  "station": { "is_online": true },
+  "station": { 
+    "is_online": true,
+    "bitrate": 128,
+    "listen_url": "https://stream-url"
+  },
   "is_online": true,
   "live": { "is_live": true, "streamer_name": "DJ Name" },
-  "now_playing": { "playlist": "Song Title" }
+  "now_playing": { 
+    "song": { "title": "Song", "artist": "Artist", "art": "url" },
+    "playlist": "Rotation",
+    "duration": 180,
+    "elapsed": 90
+  },
+  "listeners": { "current": 42 }
 }
 ```
 
